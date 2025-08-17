@@ -1,0 +1,30 @@
+[package]
+name = "stream-vault"
+version = "0.1.0"
+description = "Stream Vault - A streaming payments protocol built on Solana"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "stream_vault"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+test-mint = []
+
+
+[dependencies]
+anchor-lang = "0.31.1"
+anchor-spl = "0.31.1"
+
+[dev-dependencies]
+proptest = "1.4"
+arbtest = "0.3.2"
+quickcheck = "1.0"
+quickcheck_macros = "1.0"
+
