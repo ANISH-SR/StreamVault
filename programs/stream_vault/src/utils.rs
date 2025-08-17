@@ -1,9 +1,9 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, TokenAccount};
-use crate::errors::SprintVaultError;
+use crate::errors::StreamVaultError;
 pub fn validate_time_range(start_time: i64, end_time: i64, current_time: i64) -> Result<()> {
     if end_time <= start_time {
-        return Err(error!(SprintVaultError::InvalidTimeRange));
+        return Err(error!(StreamVaultError::InvalidTimeRange));
     }
     if start_time < current_time {
         msg!("Warning: Sprint start time is in the past");
@@ -12,7 +12,7 @@ pub fn validate_time_range(start_time: i64, end_time: i64, current_time: i64) ->
 }
 pub fn validate_amount(amount: u64) -> Result<()> {
     if amount == 0 {
-        return Err(error!(SprintVaultError::InvalidAmount));
+        return Err(error!(StreamVaultError::InvalidAmount));
     }
     Ok(())
 }
@@ -22,13 +22,13 @@ pub fn get_current_time() -> Result<i64> {
 pub fn calculate_release_rate(total_amount: u64, start_time: i64, end_time: i64) -> Result<u64> {
     let duration = end_time
         .checked_sub(start_time)
-        .ok_or(SprintVaultError::MathOverflow)?;
+        .ok_or(StreamVaultError::MathOverflow)?;
     if duration == 0 {
-        return Err(error!(SprintVaultError::InvalidTimeRange));
+        return Err(error!(StreamVaultError::InvalidTimeRange));
     }
     let rate = total_amount
         .checked_div(duration as u64)
-        .ok_or(SprintVaultError::MathOverflow)?;
+        .ok_or(StreamVaultError::MathOverflow)?;
     Ok(rate)
 }
 pub fn get_sprint_seeds<'a>(employer: &'a Pubkey, sprint_id: u64) -> Vec<Vec<u8>> {
@@ -51,19 +51,19 @@ pub fn validate_token_account_not_frozen(token_account: &Account<TokenAccount>) 
         let state = account_data[108];
         require!(
             state != 2, 
-            SprintVaultError::FrozenTokenAccount
+            StreamVaultError::FrozenTokenAccount
         );
     }
     require!(
         token_account.owner != Pubkey::default(),
-        SprintVaultError::FrozenTokenAccount
+        StreamVaultError::FrozenTokenAccount
     );
     Ok(())
 }
 pub fn validate_mint_decimals(mint: &Account<Mint>, expected_decimals: u8) -> Result<()> {
     require!(
         mint.decimals == expected_decimals,
-        SprintVaultError::InvalidTokenDecimals
+        StreamVaultError::InvalidTokenDecimals
     );
     Ok(())
 }
@@ -88,13 +88,13 @@ pub fn validate_mint_for_network(mint: &Pubkey) -> Result<()> {
         NetworkCluster::Mainnet => {
             require!(
                 *mint == USDC_MINT || *mint == USDT_MINT || *mint == WSOL_MINT,
-                SprintVaultError::InvalidNetworkMint
+                StreamVaultError::InvalidNetworkMint
             );
         },
         NetworkCluster::Devnet => {
             require!(
                 *mint == USDC_MINT_DEVNET || *mint == WSOL_MINT,
-                SprintVaultError::InvalidNetworkMint
+                StreamVaultError::InvalidNetworkMint
             );
         },
         NetworkCluster::Localnet => {
@@ -103,7 +103,7 @@ pub fn validate_mint_for_network(mint: &Pubkey) -> Result<()> {
         _ => {
             require!(
                 is_supported_mint(mint),
-                SprintVaultError::UnsupportedMint
+                StreamVaultError::UnsupportedMint
             );
         }
     }

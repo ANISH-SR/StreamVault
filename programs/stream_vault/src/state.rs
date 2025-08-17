@@ -39,8 +39,12 @@ impl Stream {
         32 + 
         32 + 
         1 + 
-        1 + 
-        pub fn calculate_earned_amount(&self, current_time: i64) -> Result<u64> {
+        1;
+
+    pub const LEN_CALCULATION: usize = 8 + 
+        32 + 32 + 8 + 1 + 1 + 8 + 8 + 1 + 8 + 8 + 32 + 32 + 1 + 1;
+
+    pub fn calculate_earned_amount(&self, current_time: i64) -> Result<u64> {
         let strategy = ExponentialStreamingStrategy::new(self.acceleration_type);
         strategy.calculate_earned_amount(
             self.total_amount,
@@ -136,37 +140,38 @@ impl StreamDuration {
     pub fn to_seconds(&self) -> i64 {
         const WEEK_IN_SECONDS: i64 = 7 * 24 * 60 * 60; 
         match self {
-            SprintDuration::OneWeek => WEEK_IN_SECONDS,
-            SprintDuration::TwoWeeks => 2 * WEEK_IN_SECONDS,
-            SprintDuration::ThreeWeeks => 3 * WEEK_IN_SECONDS,
-            SprintDuration::FourWeeks => 4 * WEEK_IN_SECONDS,
-            SprintDuration::SixWeeks => 6 * WEEK_IN_SECONDS,
-            SprintDuration::EightWeeks => 8 * WEEK_IN_SECONDS,
-            SprintDuration::TenWeeks => 10 * WEEK_IN_SECONDS,
-            SprintDuration::TwelveWeeks => 12 * WEEK_IN_SECONDS,
+            StreamDuration::OneWeek => WEEK_IN_SECONDS,
+            StreamDuration::TwoWeeks => 2 * WEEK_IN_SECONDS,
+            StreamDuration::ThreeWeeks => 3 * WEEK_IN_SECONDS,
+            StreamDuration::FourWeeks => 4 * WEEK_IN_SECONDS,
+            StreamDuration::SixWeeks => 6 * WEEK_IN_SECONDS,
+            StreamDuration::EightWeeks => 8 * WEEK_IN_SECONDS,
+            StreamDuration::TenWeeks => 10 * WEEK_IN_SECONDS,
+            StreamDuration::TwelveWeeks => 12 * WEEK_IN_SECONDS,
         }
     }
     pub fn description(&self) -> &'static str {
         match self {
-            SprintDuration::OneWeek => "1 week",
-            SprintDuration::TwoWeeks => "2 weeks",
-            SprintDuration::ThreeWeeks => "3 weeks",
-            SprintDuration::FourWeeks => "4 weeks (1 month)",
-            SprintDuration::SixWeeks => "6 weeks",
-            SprintDuration::EightWeeks => "8 weeks (2 months)",
-            SprintDuration::TenWeeks => "10 weeks",
-            SprintDuration::TwelveWeeks => "12 weeks (3 months)",
+            StreamDuration::OneWeek => "1 week",
+            StreamDuration::TwoWeeks => "2 weeks",
+            StreamDuration::ThreeWeeks => "3 weeks",
+            StreamDuration::FourWeeks => "4 weeks (1 month)",
+            StreamDuration::SixWeeks => "6 weeks",
+            StreamDuration::EightWeeks => "8 weeks (2 months)",
+            StreamDuration::TenWeeks => "10 weeks",
+            StreamDuration::TwelveWeeks => "12 weeks (3 months)",
         }
     }
     pub fn to_days(&self) -> u32 {
         match self {
-            SprintDuration::OneWeek => 7,
-            SprintDuration::TwoWeeks => 14,
-            SprintDuration::ThreeWeeks => 21,
-            SprintDuration::FourWeeks => 28,
-            SprintDuration::SixWeeks => 42,
-            SprintDuration::EightWeeks => 56,
-            SprintDuration::TenWeeks => 70,
+            StreamDuration::OneWeek => 7,
+            StreamDuration::TwoWeeks => 14,
+            StreamDuration::ThreeWeeks => 21,
+            StreamDuration::FourWeeks => 28,
+            StreamDuration::SixWeeks => 42,
+            StreamDuration::EightWeeks => 56,
+            StreamDuration::TenWeeks => 70,
+            StreamDuration::TwelveWeeks => 84,
         }
     }
     pub fn from_seconds(seconds: i64) -> Option<Self> {
