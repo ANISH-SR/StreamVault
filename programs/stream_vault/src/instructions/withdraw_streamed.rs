@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer, Mint};
 use crate::state::Stream;
 use crate::errors::StreamVaultError;
-use crate::utils::{get_current_time, validate_token_account_not_frozen, is_dust_amount, round_amount_for_precision};
+use crate::utils::{get_current_time, is_dust_amount, round_amount_for_precision};
 use crate::constants::get_min_withdrawal_amount;
 #[derive(Accounts)]
 pub struct WithdrawStreamed<'info> {
@@ -48,15 +48,8 @@ pub fn handler(ctx: Context<WithdrawStreamed>) -> Result<()> {
     }
     
     // Get stream data needed for seeds before mutable borrow
-    let stream_id_bytes = stream_info.stream_id.to_le_bytes();
     let stream_pubkey = stream_info.key();
     let bump = stream_info.bump;
-    let seeds = &[
-        b"stream",
-        stream_info.employer.as_ref(),
-        &stream_info.stream_id.to_le_bytes(),
-        &[bump],
-    ];
     let signer: &[&[&[u8]]] = &[&[b"stream", stream_pubkey.as_ref(), &[bump]]];
     
     // Now perform mutable operations

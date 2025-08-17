@@ -86,7 +86,7 @@ impl Stream {
             let current_pause_duration = current_time
                 .checked_sub(pause_time)
                 .ok_or(error!(crate::errors::StreamVaultError::MathOverflow))?;
-            let sprint_duration = self.get_sprint_duration()?;
+            let sprint_duration = self.get_stream_duration()?;
             if current_pause_duration > sprint_duration {
                 return Ok(true);
             }

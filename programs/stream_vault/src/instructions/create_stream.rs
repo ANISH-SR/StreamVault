@@ -9,8 +9,6 @@ use crate::errors::StreamVaultError;
 #[derive(Accounts)]
 #[instruction(stream_id: u64)]
 pub struct CreateStream<'info> {
-    /// The unique ID for this stream
-    pub stream_id: u64,
     #[account(
         init,
         payer = employer,
@@ -91,7 +89,7 @@ pub fn handler(
     stream.mint = ctx.accounts.mint.key();
     stream.vault = ctx.accounts.vault.key();
     stream.acceleration_type = acceleration_type.unwrap_or(AccelerationType::Linear);
-    stream.bump = *ctx.bumps.get("stream").ok_or(StreamVaultError::PDACollision)?; 
+    stream.bump = ctx.bumps.stream;
     msg!(
         "Stream created: ID={}, employer={}, freelancer={}, amount={}, acceleration={:?}",
         stream_id,
