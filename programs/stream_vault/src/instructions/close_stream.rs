@@ -55,14 +55,19 @@ pub fn handler(ctx: Context<CloseStream>) -> Result<()> {
         authority: ctx.accounts.stream.to_account_info(),
     };
     
-    let seeds = &[
-        b"stream",
-        ctx.accounts.employer.key().as_ref(),
-        &stream.stream_id.to_le_bytes(),
-        &[stream.bump],
-    ];
+    let employer_key = ctx.accounts.employer.key();
+    let stream_id_bytes = stream.stream_id.to_le_bytes();
+    let bump = stream.bump;
+    let bump_array = [bump];
     
-    let signer_seeds = &[&seeds[..]];
+    let seeds = &[
+        b"stream".as_ref(),
+        employer_key.as_ref(),
+        &stream_id_bytes,
+        &bump_array,
+    ][..];
+    
+    let signer_seeds = &[seeds];
     let cpi_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         close_accounts,
